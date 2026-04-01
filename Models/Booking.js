@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const bookingSchema = new mongoose.Schema({
   type: { type: String, required: true, enum: ['event', 'room', 'general'] },
   name: { type: String, required: true },
-  email: { type: String, required: true },
+  email: { type: String },
   phone: { type: String, required: true },
   event_type: { type: String },
   guest_count: { type: Number },
