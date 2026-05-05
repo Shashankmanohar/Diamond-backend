@@ -8,7 +8,8 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser());
 app.use(cors({
   origin: [
@@ -36,6 +37,22 @@ app.get('/', (req, res) => {
 // Routes
 app.use('/api/bookings', require('./Routes/bookingRoutes'));
 app.use('/api/admin', require('./Routes/adminRoutes'));
+app.use('/api/blogs', require('./Routes/blogRoutes'));
+app.use('/api/upload', require('./Routes/uploadRoutes'));
+
+// 404 Handler for API
+app.use((req, res, next) => {
+  res.status(404).json({ message: `Route ${req.originalUrl} not found` });
+});
+
+// Global Error Handler (Returns JSON instead of HTML)
+app.use((err, req, res, next) => {
+  console.error('Server Error:', err);
+  res.status(err.status || 500).json({ 
+    message: err.message || 'An internal server error occurred',
+    error: process.env.NODE_ENV === 'development' ? err : {}
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
